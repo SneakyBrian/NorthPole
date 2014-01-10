@@ -6,7 +6,7 @@ North Pole provides 2 HTTP end points that except any arbitrary POST data.
 
 **`/elf`** is the end point that signs the data with a timestamp and a HMAC
 
-**`/santa`** is the end point that verifies the values returned by **`/elf`**
+**`/santa`** is the end point that verifies the values returned by `/elf`
 
 **`/santa`** responds with:
 
@@ -16,6 +16,6 @@ North Pole provides 2 HTTP end points that except any arbitrary POST data.
 
 The service has 2 configuration items:
 
-1. A minimum age that the timestamps must be before they will pass verification by **`/santa`**
+1. A minimum age that the timestamps must be before they will pass verification by `/santa`
 2. A super secret key that is combined with the user-specified key in order to generate the HMAC
 

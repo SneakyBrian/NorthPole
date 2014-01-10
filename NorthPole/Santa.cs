@@ -21,38 +21,31 @@ namespace NorthPole
             var usertimestamp = context.Request.QueryString.Get("timestamp");
             var userhmac = context.Request.QueryString.Get("hmac");
 
-            var secretkey = userkey + ConfigurationManager.AppSettings["secretkey"];
+            var minage = TimeSpan.Parse(ConfigurationManager.AppSettings["minage"]);
 
-            string input = string.Empty;
-            using (var sr = new StreamReader(context.Request.InputStream))
+            var timestamp = DateTime.FromBinary(long.Parse(usertimestamp));
+
+            var age = DateTime.UtcNow - timestamp;
+
+            if (age >= minage)
             {
-                input = sr.ReadToEnd();
-            }
+                var secretkey = userkey + ConfigurationManager.AppSettings["secretkey"];
 
-            input += string.Format("{0}{1}", Environment.NewLine, usertimestamp);
-
-            var hmac = Rudolph.GenerateHMAC(input, secretkey);
-
-            if (userhmac == hmac)
-            {
-                var minage = TimeSpan.Parse(ConfigurationManager.AppSettings["minage"]);
-
-                var timestamp = DateTime.FromBinary(long.Parse(usertimestamp));
-
-                var age = DateTime.UtcNow - timestamp;
-
-                if (age >= minage)
+                string input = string.Empty;
+                using (var sr = new StreamReader(context.Request.InputStream))
                 {
-                    context.Response.Output.WriteLine("NICE");
+                    input = sr.ReadToEnd();
                 }
-                else
-                {
-                    context.Response.Output.WriteLine("NOTREADY " + (minage - age).TotalMilliseconds);
-                }
+
+                input += string.Format("{0}{1}", Environment.NewLine, usertimestamp);
+
+                var hmac = Rudolph.GenerateHMAC(input, secretkey);
+
+                context.Response.Output.WriteLine(userhmac == hmac ? "NICE" : "NAUGHTY");
             }
-            else 
+            else
             {
-                context.Response.Output.WriteLine("NAUGHTY");
+                context.Response.Output.WriteLine("NOTREADY " + (minage - age).TotalMilliseconds);
             }
             
             context.Response.Output.Flush();   

@@ -21,3 +21,5 @@ The service has 2 configuration items:
 
 See `test.html` for example usage.
 
+This project has a port written in Erlang: [NorthPole.Erlang](https://github.com/SneakyBrian/NorthPole.Erlang).
+

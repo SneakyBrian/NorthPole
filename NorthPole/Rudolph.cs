@@ -21,7 +21,7 @@ namespace NorthPole
 
             var stream = new MemoryStream(inputBytes);
 
-            return hmacsha1.ComputeHash(stream).Aggregate("", (s, e) => s + String.Format("{0:x2}", e), s => s);
+            return Convert.ToBase64String(hmacsha1.ComputeHash(stream));
         }
     }
 }
